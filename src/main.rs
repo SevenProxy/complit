@@ -1,5 +1,5 @@
 use logos::Logos;
-use std::{collections::HashMap, usize};
+use std::{collections::HashMap, intrinsics::unreachable, usize};
 
 #[derive(Logos, Debug, PartialEq, Clone)]
 enum Token {
@@ -39,6 +39,7 @@ enum Stmt {
     Print(Expr),
 }
 
+#[derive(Debug)]
 enum Expr {
     Number(i64),
     Variable(String),
@@ -91,6 +92,37 @@ impl Parser {
                 false
             },
         }
+    }
+
+    fn parse_number_or_var(&mut self) -> Option<Expr> {
+        match self.next()? {
+            Token::Number(n) => Some(Expr::Number(n)),
+            Token::Identifier(name) => Some(Expr::Variable(name)),
+            _ => None,
+        }
+    }
+
+    fn parse_term(&mut self) -> Option<Expr> {
+        let mut expr = self.parse_number_or_var()?;
+
+        while let Some(tok) = self.peek() {
+            let op = match tok {
+                Token::Star | Token::Slash => {
+                    let t = self.next().unwrap();
+                    match t {
+                        Token::Star => "*",
+                        Token::Slash => "/",
+                        _ => unreachable!(),
+                    }
+                }
+                _ => break,
+            };
+
+            let right = self.parse_number_or_var()?;
+            expr = Expr::Binary { left: Box::new(expr), op: op.to_string(), right: Box::new(right) }
+        }
+
+        Some(expr)
     }
 }
 
