@@ -34,12 +34,6 @@ enum Token {
 }
 
 #[derive(Debug)]
-enum Stmt {
-    Let(String, Expr),
-    Print(Expr),
-}
-
-#[derive(Debug)]
 enum Expr {
     Number(i64),
     Variable(String),
