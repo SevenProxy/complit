@@ -61,6 +61,7 @@ impl Parser {
     fn peek(&self) -> Option<&Token> {
         self.tokens.get(self.pos)
     }
+    
 
     fn next(&mut self) -> Option(Token) {
         match self.pos < self.tokens.len() {
