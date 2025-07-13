@@ -1,11 +1,10 @@
-
 #[derive(Debug)]
 pub enum Expr {
   Number(i64),
   Variable(String),
   Binary {
-    left: Box::new(Expr),
+    left: Box<Expr>,
     op: String,
-    right: Box::new(Expr),
-  }
+    right: Box<Expr>,
+  },
 }

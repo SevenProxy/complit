@@ -150,7 +150,7 @@ fn eval(expr: &Expr, vars: &HashMap<String, i64>) -> i64 {
                 "-" => l - r,
                 "*" => l * r,
                 "/" => l / r,
-                _ => panic!("Operador inválido!"),
+                _ => panic!("Invalid Operator!"),
             }
         }
     }
