@@ -8,3 +8,9 @@ pub enum Expr {
     right: Box<Expr>,
   },
 }
+
+#[derive(Debug)]
+pub enum Stmt {
+  Let(String, Expr),
+  Print(Expr),
+}

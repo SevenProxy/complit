@@ -2,18 +2,10 @@ use std::collections::HashMap;
 
 use crate::Expr;
 
-pub struct Eval {
-  expr: Expr,
-}
+pub struct Eval;
 
 impl Eval {
-  fn new(self, expr: Expr) -> Self {
-    Self {
-      expr,
-    }
-  }
-
-  fn eval_operation(&self, expr: &Expr, vars: &HashMap<String, i64>) -> Option<i64> {
+  pub fn eval_operation(&self, expr: &Expr, vars: &HashMap<String, i64>) -> i64 {
     match expr {
       Expr::Number(n) => *n,
       Expr::Variable(name) => *vars.get(name).unwrap_or(&0),

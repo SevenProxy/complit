@@ -30,6 +30,10 @@ pub enum Token {
     Star,
     #[token("/")]
     Slash,
+    #[token("(")]
+    LParen,
+    #[token(")")]
+    RParen,
     #[token(";")]
     Semicolon,
 }
