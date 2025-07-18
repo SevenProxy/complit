@@ -1,24 +1,33 @@
-use std::collections::HashMap;
+use std::{
+    env,
+    collections::HashMap
+};
 
 use logos::Logos;
-use disturbed::{ Token, Stmt, Parse, Eval };
+use disturbed::{ 
+    Token,
+    Stmt, 
+    Parse,
+    Eval,
+    Read,
+};
 
 fn main() {
-    let input = "
-        let x = 1 + 2 * 3;
-        print x;
-    ";
-
-    let lexer = Token::lexer(input)
-        .filter_map(Result::ok)
-        .collect::<Vec<_>>();
+    let args: Vec<String> = env::args().collect();
     
-    println!("{:?}", lexer);
+    if args.len() < 2 {
+        eprintln!("Uso: cargo run -- <namefile.kj>");
+        std::process::exit(1);
+    }
 
-    let mut parser = Parse::new(lexer);
-    let ast = parser.parse_all();
+    let path_file: &String = &args[1];
+    let mut read: Read = Read::new((path_file).to_string());
+    let lexer: Result<Vec<Token>, ()> = read.file_read();
 
-    let mut vars = HashMap::new();
+    let mut parser: Parse = Parse::new(lexer.expect("REASON"));
+    let ast: Vec<Stmt> = parser.parse_all();
+
+    let mut vars: HashMap<String, i64> = HashMap::new();
 
     for stmt in ast {
         match stmt {
@@ -27,7 +36,7 @@ fn main() {
                 vars.insert(name, val);
             },
             Stmt::Print(expr) => {
-                println!("{}", Eval::eval_operation(&Eval, &expr, &vars));
+                println!("{:?}", Eval::eval_operation(&Eval, &expr, &vars));
             }
         }
     }

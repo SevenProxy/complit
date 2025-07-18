@@ -23,7 +23,6 @@ impl Parse {
             true => {
                 let tokens = self.tokens[self.pos].clone();
                 self.pos += 1;
-
                 Some(tokens)
             },
             false => None,

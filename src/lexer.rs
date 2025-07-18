@@ -5,20 +5,22 @@ use std::usize;
 #[derive(Logos, Debug, PartialEq, Clone)]
 pub enum Token {
     #[regex(r"[\t\n\f]+", logos::skip)]
-    Error,
+    Ignored,
 
-    #[token("let")]
+    #[token("armazena_robozinho")]
     Let,
 
-    #[token("print")]
+    #[token("mostra_na_tela_robozinho")]
     Print,
 
     #[regex("[a-zA-Z_][a-zA-Z0-9_]*", |lex| Some(lex.slice().to_string()))]
     Identifier(String),
 
-    #[regex(r"[0-9]+", |lex| lex.slice().parse().ok())]
+    #[regex(r"-?[0-9]+", |lex| lex.slice().parse().ok())]
     Number(i64),
 
+    #[regex("-?[0-9]+\\.[0-9]+", |lex| lex.slice().parse().ok())]
+    Float(f64),
 
     #[token("=")]
     Equal,
