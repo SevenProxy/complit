@@ -3,7 +3,6 @@ use std::{
     collections::HashMap
 };
 
-use logos::Logos;
 use disturbed::{ 
     Token,
     Stmt, 

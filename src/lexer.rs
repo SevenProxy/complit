@@ -7,6 +7,9 @@ pub enum Token {
     #[regex(r"[\t\n\f]+", logos::skip)]
     Ignored,
 
+    #[regex(r"/\/\[a-ZA-Z_][a-zA-Z0-0]*", logos::skip)]
+    Comment,
+
     #[token("armazena_robozinho")]
     Let,
 
