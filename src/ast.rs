@@ -1,6 +1,7 @@
 #[derive(Debug)]
 pub enum Expr {
   Number(i64),
+  Str(String),
   Variable(String),
   Binary {
     left: Box<Expr>,
@@ -13,4 +14,11 @@ pub enum Expr {
 pub enum Stmt {
   Let(String, Expr),
   Print(Expr),
+}
+
+
+#[derive(Debug, Clone)]
+pub enum Value {
+  Number(i64),
+  Str(String),
 }

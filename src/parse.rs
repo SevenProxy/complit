@@ -33,6 +33,7 @@ impl Parse {
         match self.next_token()? {
             Token::Number(n) => Some(Expr::Number(n)),
             Token::Identifier(name) => Some(Expr::Variable(name)),
+            Token::Str(s) => Some(Expr::Str(s)), 
             Token::LParen => {
                 let expr = self.parse_expr()?;
                 match self.next_token()? {

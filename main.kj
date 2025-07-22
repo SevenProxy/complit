@@ -1,3 +1,12 @@
-armazena_robozinho x = 1 + 2 * 3;
-// comment comment
+armazena_robozinho x = "aaaa";
+// sexo é vida
 mostra_na_tela_robozinho x;
+
+armazena_robozinho y = 5 + 4;
+mostra_na_tela_robozinho y;
+
+mostra_na_tela_robozinho x;
+mostra_na_tela_robozinho y;
+
+armazena_robozinho y = 7;
+mostra_na_tela_robozinho y;

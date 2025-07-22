@@ -9,6 +9,7 @@ use disturbed::{
     Parse,
     Eval,
     Read,
+    Value,
 };
 
 fn main() {
@@ -26,7 +27,7 @@ fn main() {
     let mut parser: Parse = Parse::new(lexer.expect("REASON"));
     let ast: Vec<Stmt> = parser.parse_all();
 
-    let mut vars: HashMap<String, i64> = HashMap::new();
+    let mut vars: HashMap<String, Value> = HashMap::new();
 
     for stmt in ast {
         match stmt {

@@ -7,7 +7,7 @@ pub enum Token {
     #[regex(r"[\t\n\f]+", logos::skip)]
     Ignored,
 
-    #[regex(r"/\/\[a-ZA-Z_][a-zA-Z0-0]*", logos::skip)]
+    #[regex(r"//[^\n]*", logos::skip)]
     Comment,
 
     #[token("armazena_robozinho")]
@@ -18,6 +18,12 @@ pub enum Token {
 
     #[regex("[a-zA-Z_][a-zA-Z0-9_]*", |lex| Some(lex.slice().to_string()))]
     Identifier(String),
+
+    #[regex(r#""([^"\\]|\\.)*""#, |lex| {
+        let slice: &'s str = lex.slice();
+        Some(slice[1..slice.len() - 1].to_string())
+    })]
+    Str(String),
 
     #[regex(r"-?[0-9]+", |lex| lex.slice().parse().ok())]
     Number(i64),
