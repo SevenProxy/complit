@@ -1,4 +1,16 @@
-use crate::{ Token, Expr, Stmt };
+/*
+ * Killjoy Lang - A simple code interpreter
+ * Copyright (c) 2025 Proxy Seven
+ *
+ * Licensed under the MIT License.
+ * You may use, copy, modify, and distribute this software freely,
+ * provided that this notice is included in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+ */
+
+
+use crate::{ Expr, Print, Stmt, Token };
 use std::usize;
 
 pub struct Parse {
@@ -104,7 +116,8 @@ impl Parse {
                 self.next_token();
                 let expr = self.parse_expr()?;
                 if let Some(Token::Semicolon) = self.next_token() {
-                    return Some(Stmt::Print(expr));
+                    let print_function: Print = Print::Ast(expr);
+                    return Some(Stmt::Print(print_function));
                 }
             },
             _ => {},

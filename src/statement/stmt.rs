@@ -10,21 +10,13 @@
  */
 
 
-mod error;
-mod parse;
-mod lexer;
-mod ast;
-mod eval;
-mod read;
-mod statement;
-mod functions;
+use crate::{
+  Expr,
+  Print,
+};
 
-pub use logos;
-
-pub use parse::{ Parse };
-pub use lexer::Token;
-pub use ast::{ Expr, Value };
-pub use statement::Stmt;
-pub use eval::Eval;
-pub use read::Read;
-pub use functions::Print;
+#[derive(Debug)]
+pub enum Stmt {
+  Let(String, Expr),
+  Print(Print),
+}

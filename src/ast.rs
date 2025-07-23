@@ -1,3 +1,15 @@
+/*
+ * Killjoy Lang - A simple code interpreter
+ * Copyright (c) 2025 Proxy Seven
+ *
+ * Licensed under the MIT License.
+ * You may use, copy, modify, and distribute this software freely,
+ * provided that this notice is included in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+ */
+
+
 #[derive(Debug)]
 pub enum Expr {
   Number(i64),
@@ -8,12 +20,6 @@ pub enum Expr {
     op: String,
     right: Box<Expr>,
   },
-}
-
-#[derive(Debug)]
-pub enum Stmt {
-  Let(String, Expr),
-  Print(Expr),
 }
 
 
