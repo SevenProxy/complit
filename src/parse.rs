@@ -54,7 +54,7 @@ impl Parse {
       Token::Number(n) => Some(Expr::Number(n)),
       Token::Str(s) => Some(Expr::Str(s)),
       Token::LParen => {
-        let expr: Expr = self.parse_operation()?;
+        let expr: Expr = self.parse_term()?;
         match self.next_token()? {
           Token::RParen => Some(expr),
           _ => None,
@@ -65,14 +65,32 @@ impl Parse {
   }
 
   fn parse_term(&mut self) -> Option<Expr> {
-    let mut expr: Export = self.parse_factory();
+    let mut expr: Expr = self.parse_factory()?;
 
     /*
       tok: &Token
      */
     while let Some(tok) = self.peek() {
+      /*
+        operation: &'static str
+       */
       let operation = match tok {
-        
+        Token::Plus => {
+          self.next_token();
+          "+"
+        },
+        Token::Minus => {
+          self.next_token();
+          "-"
+        },
+        _ => break,
+      };
+
+      let right: Expr = self.parse_factory()?;
+      expr = Expr::Binary {
+        left: Box::new(expr),
+        op: operation.to_string(),
+        right: Box::new(right),
       }
     }
 
@@ -80,18 +98,35 @@ impl Parse {
   }
 
   fn parse_factory(&mut self) -> Option<Expr> {
-    let mut expr = self.parse_primary()?;
+    let mut expr: Expr = self.parse_primary()?;
     
+    /*
+      tok: &Token
+     */
     while let Some(tok) = self.peek() {
+      /*
+        operation: &'static str
+       */
       let operation = match tok {
-        Token::Slash => "/",
-        Token::Star => "*",
-        Token::Plus => "+",
-        Token::Minus => "-",
+        Token::Star => {
+          self.next_token();
+          "*"
+        },
+        Token::Slash => {
+          self.next_token();
+          "/"
+        }
         _ => break,
       };
 
+      let right: Expr = self.parse_primary()?;
+      expr = Expr::Binary {
+        left: Box::new(expr),
+        op: operation.to_string(),
+        right: Box::new(right),
+      }
     }
+
     Some(expr)
   }
     
@@ -106,7 +141,7 @@ impl Parse {
         self.next_token();
         if let Some(Token::Identifier(name)) = self.next_token() {
           if let Some(Token::Equal) = self.next_token() {
-            let expr: Expr = self.parse_operation()?;
+            let expr: Expr = self.parse_term()?;
             if let Some(Token::Semicolon) = self.next_token() {
               return Some(Stmt::Let(name, expr));
             } else {
@@ -118,7 +153,7 @@ impl Parse {
       },
       Token::Print => {
         self.next_token();
-        let expr: Expr = self.parse_operation()?;
+        let expr: Expr = self.parse_term()?;
         if let Some(Token::Semicolon) = self.next_token() {
           let print_function: Print = Print::Ast(expr);
           return Some(Stmt::Print(print_function));
