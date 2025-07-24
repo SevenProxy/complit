@@ -16,8 +16,11 @@ use std::usize;
 
 #[derive(Logos, Debug, PartialEq, Clone)]
 pub enum Token {
-    #[regex(r"[\t\n\f]+", logos::skip)]
+    #[regex(r"[\t\f]+", logos::skip)]
     Ignored,
+
+    #[regex(r"\n")]
+    Line,
 
     #[regex(r"//[^\n]*", logos::skip)]
     Comment,

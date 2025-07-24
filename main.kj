@@ -1,12 +1,4 @@
-armazena_robozinho x = "aaaa";
-// sexo é vida
-mostra_na_tela_robozinho x;
-
-armazena_robozinho y = 5 + 4;
-mostra_na_tela_robozinho y;
+armazena_robozinho x = 8 * 2 + 4;
+// oi isso é um coment
 
 mostra_na_tela_robozinho x;
-mostra_na_tela_robozinho y;
-
-armazena_robozinho y = 7;
-mostra_na_tela_robozinho y;

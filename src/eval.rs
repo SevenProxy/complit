@@ -15,7 +15,6 @@ use std::collections::HashMap;
 use crate::{
   Expr,
   Print,
-  Stmt,
   Value
 };
 
@@ -49,7 +48,7 @@ impl Eval {
 
           (Value::Str(x), Value::Str(y), "+") => Value::Str(x + &y),
 
-          _ => panic!("Invalid Operator!"),
+          _ => panic!("Invalid Operation!"),
         }
       }
     }

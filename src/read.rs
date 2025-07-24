@@ -33,7 +33,6 @@ impl Read {
     let content: String = fs::read_to_string(&self.file_name)
       .expect(&message_warning_not_found_file);
 
-    println!("{:?}", content);
     if content.trim().is_empty() {
       return Err(());
     }

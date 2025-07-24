@@ -10,143 +10,155 @@
  */
 
 
-use crate::{ Expr, Print, Stmt, Token };
+use crate::{ 
+  Expr,
+  Print,
+  Stmt,
+  Token
+};
 use std::usize;
 
 pub struct Parse {
-    tokens: Vec<Token>,
-    pos: usize,
+  tokens: Vec<Token>,
+  pos: usize,
+  line: u32,
 }
 
 impl Parse {
-    pub fn new(tokens: Vec<Token>) -> Self {
-        Self {
-            tokens,
-            pos: 0,
-        }
+  pub fn new(tokens: Vec<Token>) -> Self {
+    Self {
+      tokens,
+      pos: 0,
+      line: 0,
     }
+  }
 
-   pub fn peek(&self) -> Option<&Token> {
-        self.tokens.get(self.pos)
+  pub fn peek(&self) -> Option<&Token> {
+    self.tokens.get(self.pos)
+  }
+
+  fn next_token(&mut self) -> Option<Token> {
+    match self.pos < self.tokens.len() {
+      true => {
+        let tokens = self.tokens[self.pos].clone();
+        self.pos += 1;
+        Some(tokens)
+      },
+      false => None,
     }
+  }
 
-    fn next_token(&mut self) -> Option<Token> {
-        match self.pos < self.tokens.len() {
-            true => {
-                let tokens = self.tokens[self.pos].clone();
-                self.pos += 1;
-                Some(tokens)
-            },
-            false => None,
-        }
-    }
-
-    fn parse_primary(&mut self) -> Option<Expr> {
+  fn parse_primary(&mut self) -> Option<Expr> {
+    match self.next_token()? {
+      Token::Identifier(name) => Some(Expr::Variable(name)),
+      Token::Number(n) => Some(Expr::Number(n)),
+      Token::Str(s) => Some(Expr::Str(s)),
+      Token::LParen => {
+        let expr: Expr = self.parse_operation()?;
         match self.next_token()? {
-            Token::Number(n) => Some(Expr::Number(n)),
-            Token::Identifier(name) => Some(Expr::Variable(name)),
-            Token::Str(s) => Some(Expr::Str(s)), 
-            Token::LParen => {
-                let expr = self.parse_expr()?;
-                match self.next_token()? {
-                    Token::RParen => Some(expr),
-                    _ => None,
-                }
-            }
-            _ => None,
+          Token::RParen => Some(expr),
+          _ => None,
         }
+      }
+      _ => None,
     }
+  }
 
-    fn parse_term(&mut self) -> Option<Expr> {
-        let mut expr = self.parse_primary()?;
+  fn parse_term(&mut self) -> Option<Expr> {
+    let mut expr: Export = self.parse_factory();
 
-        while let Some(tok) = self.peek() {
-            let op = match tok {
-                Token::Star => "*",
-                Token::Slash => "/",
-                _ => break,
-            };
-
-            self.next_token();
-
-            let right = self.parse_primary()?;
-            expr = Expr::Binary { left: Box::new(expr), op: op.to_string(), right: Box::new(right) };
-        }
+    /*
+      tok: &Token
+     */
+    while let Some(tok) = self.peek() {
+      let operation = match tok {
         
-        Some(expr)
+      }
     }
 
-    fn parse_expr(&mut self) -> Option<Expr> {
-        let mut expr = self.parse_primary()?;
+    Some(expr)
+  }
 
-        while let Some(tok) = self.peek() {
-            let op = match tok {
-                Token::Plus => "+",
-                Token::Minus => "-",
-                _ => break,
-            };
-
-            self.next_token();
-            let rhs = self.parse_term()?;
-
-            expr = Expr::Binary {
-                left: Box::new(expr),
-                op: op.to_string(),
-                right: Box::new(rhs),
-            };
-        }
-
-        Some(expr)
-    }
+  fn parse_factory(&mut self) -> Option<Expr> {
+    let mut expr = self.parse_primary()?;
     
-    fn parse_stmt(&mut self) -> Option<Stmt> {
-        match self.peek()? {
-            Token::Let => {
-                self.next_token();
-                if let Some(Token::Identifier(name)) = self.next_token() {
-                    if let Some(Token::Equal) = self.next_token() {
-                        let expr = self.parse_expr()?;
-                        if let Some(Token::Semicolon) = self.next_token() {
-                            return Some(Stmt::Let(name, expr));
-                        }
-                    }
-                }
-            },
-            Token::Print => {
-                self.next_token();
-                let expr = self.parse_expr()?;
-                if let Some(Token::Semicolon) = self.next_token() {
-                    let print_function: Print = Print::Ast(expr);
-                    return Some(Stmt::Print(print_function));
-                }
-            },
-            _ => {},
-        }
+    while let Some(tok) = self.peek() {
+      let operation = match tok {
+        Token::Slash => "/",
+        Token::Star => "*",
+        Token::Plus => "+",
+        Token::Minus => "-",
+        _ => break,
+      };
 
-        None
     }
-
-    pub fn parse_all(&mut self) -> Vec<Stmt> {
-        let mut stmts = Vec::new();
-        while self.peek().is_some() {
-            if let Some(stmt) = self.parse_stmt() {
-                stmts.push(stmt);
+    Some(expr)
+  }
+    
+  fn parse_stmt(&mut self) -> Option<Stmt> {
+    match self.peek()? {
+      Token::Line => {
+        self.next_token();
+        self.line += 1;
+        return self.parse_stmt();
+      },
+      Token::Let => {
+        self.next_token();
+        if let Some(Token::Identifier(name)) = self.next_token() {
+          if let Some(Token::Equal) = self.next_token() {
+            let expr: Expr = self.parse_operation()?;
+            if let Some(Token::Semicolon) = self.next_token() {
+              return Some(Stmt::Let(name, expr));
             } else {
-                println!("Error de parse");
-                break;
+              eprintln!("[Error] - Invalid Sintaxe! Please add ; in line end.");
+              std::process::exit(1);
             }
+          }
         }
-        stmts
+      },
+      Token::Print => {
+        self.next_token();
+        let expr: Expr = self.parse_operation()?;
+        if let Some(Token::Semicolon) = self.next_token() {
+          let print_function: Print = Print::Ast(expr);
+          return Some(Stmt::Print(print_function));
+        }
+      },
+      _ => {},
     }
 
-    fn expect(&mut self, expected: Token) -> bool {
-        match self.peek() == Some(&expected) {
-            true => {
-                self.next_token();
-                true
-            },
-            false => false,
+    None
+  }
+
+  pub fn parse_all(&mut self) -> Vec<Stmt> {
+    let mut stmts: Vec<Stmt> = Vec::new();
+    while self.peek().is_some() {
+      if let Some(stmt) = self.parse_stmt() {
+        stmts.push(stmt);
+      } else {
+        println!("[Error] - Interpretation Failed.");
+        println!("Line: {}", self.line + 1);
+        
+        if let Some(token) = self.peek() {
+          println!("Unexpected token: {:?}", token);
+        } else {
+          println!("Unexpected end of input.");
         }
+
+        break;
+      }
     }
+    stmts
+  }
+
+  pub fn expect(&mut self, expected: Token) -> bool {
+    match self.peek() == Some(&expected) {
+      true => {
+        self.next_token();
+        true
+      },
+      false => false,
+    }
+  }
 
 }

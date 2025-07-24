@@ -10,7 +10,7 @@
  */
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Expr {
   Number(i64),
   Str(String),
