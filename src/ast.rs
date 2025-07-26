@@ -27,4 +27,6 @@ pub enum Expr {
 pub enum Value {
   Number(i64),
   Str(String),
+  Boolean(bool),
+  Float(f64),
 }

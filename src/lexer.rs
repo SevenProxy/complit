@@ -28,12 +28,18 @@ pub enum Token {
     #[token("armazena_robozinho")]
     Let,
 
+    #[regex("[a-zA-Z_][a-zA-Z0-9_]*", |lex| Some(lex.slice().to_string()))]
+    Identifier(String),
+    
+    /*
+    *  FUNCTIONs
+    */
     #[token("mostra_na_tela_robozinho")]
     Print,
 
-    #[regex("[a-zA-Z_][a-zA-Z0-9_]*", |lex| Some(lex.slice().to_string()))]
-    Identifier(String),
-
+    /*
+     *  TYPES
+     */
     #[regex(r#""([^"\\]|\\.)*""#, |lex| {
         let slice: &'s str = lex.slice();
         Some(slice[1..slice.len() - 1].to_string())
@@ -46,6 +52,12 @@ pub enum Token {
     #[regex("-?[0-9]+\\.[0-9]+", |lex| lex.slice().parse().ok())]
     Float(f64),
 
+    #[regex("(true|false)", |lex| lex.slice().parse().ok())]
+    Boolean(bool),
+
+    /*
+     *  SYMBOLS
+     */
     #[token("=")]
     Equal,
     #[token("+")]
