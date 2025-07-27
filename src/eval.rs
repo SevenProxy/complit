@@ -34,8 +34,10 @@ impl Eval {
 
   pub fn eval_operation(&self, expr: &Expr, vars: &HashMap<String, Value>) -> Value {
     match expr {
-      Expr::Number(n) => Value::Number(*n),
-      Expr::Str(s) => Value::Str(s.clone()),
+      Expr::Number(type_number) => Value::Number(*type_number),
+      Expr::Str(type_string) => Value::Str(type_string.clone()),
+      Expr::Boolean(type_boolean) => Value::Boolean(*type_boolean),
+      Expr::Float(type_float) => Value::Float(*type_float),
       Expr::Variable(name) => vars.get(name).cloned().unwrap_or(Value::Number(0)),
       Expr::Binary { left, op, right } => {
         let l: Value = self.eval_operation(left, vars);

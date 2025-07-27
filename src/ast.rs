@@ -15,6 +15,8 @@ pub enum Expr {
   Number(i64),
   Str(String),
   Variable(String),
+  Boolean(bool),
+  Float(f64),
   Binary {
     left: Box<Expr>,
     op: String,

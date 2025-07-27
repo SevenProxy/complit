@@ -51,8 +51,10 @@ impl Parse {
   fn parse_primary(&mut self) -> Option<Expr> {
     match self.next_token()? {
       Token::Identifier(name) => Some(Expr::Variable(name)),
-      Token::Number(n) => Some(Expr::Number(n)),
-      Token::Str(s) => Some(Expr::Str(s)),
+      Token::Number(type_integer) => Some(Expr::Number(type_integer)),
+      Token::Str(type_string) => Some(Expr::Str(type_string)),
+      Token::Boolean(type_bool) => Some(Expr::Boolean(type_bool)),
+      Token::Float(type_float) => Some(Expr::Float(type_float)),
       Token::LParen => {
         let expr: Expr = self.parse_term()?;
         match self.next_token()? {
