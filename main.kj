@@ -1,4 +1,4 @@
-armazena_robozinho x = true;
+armazena_robozinho x = 5 + 5 * 9;
 // oi isso é um coment
 
 mostra_na_tela_robozinho x;
